@@ -8,7 +8,9 @@
     "text-to-card": "cli.js"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "test:e2e": "node test-e2e.js",
+    "test:all": "node test.js && node test-e2e.js"
   },
   "engines": {
     "node": ">=20"
