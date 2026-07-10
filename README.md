@@ -36,6 +36,7 @@ txt2card title "This is a test"
 txt2card text "A longer block of body text"
 txt2card description "Title" "Supporting description"
 txt2card bullets "First point" "Second point" "Third point"
+txt2card title-bullets "Title" "First point" "Second point"
 
 # alias
 text-to-card title "This is a test"
@@ -50,6 +51,7 @@ txt2card title "Hello" -o out/hello.png
 | `text` | Centered body text |
 | `description` | Title + description |
 | `bullets` | Left-aligned bullet list |
+| `title-bullets` | Clean title over bullets (`list` alias) |
 
 ## Output
 

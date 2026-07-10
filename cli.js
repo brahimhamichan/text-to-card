@@ -48,6 +48,7 @@ function helpText(name = cliName()) {
   ${name} text "Text" [-o path.png]
   ${name} description "Title" "Description" [-o path.png]
   ${name} bullets "First point" "Second point" [-o path.png]
+  ${name} title-bullets "Title" "First point" "Second point" [-o path.png]
 
 Commands: txt2card (preferred) or text-to-card
 Default output: cards/card_YYYY_MM_DD_HH_mm_ss_<Text_Slug>.png
@@ -91,7 +92,14 @@ function toSnakeStyle(text, maxLength = SLUG_MAX) {
 }
 
 function contentForSlug(template, values) {
-  if (template === 'description' || template === 'title-description') return values[0] || '';
+  if (
+    template === 'description' ||
+    template === 'title-description' ||
+    template === 'title-bullets' ||
+    template === 'list'
+  ) {
+    return values[0] || '';
+  }
   if (template === 'bullets') return values.slice(0, 3).join(' ');
   return values.join(' ');
 }
@@ -137,6 +145,24 @@ async function render(template, values, output) {
   } else if (template === 'bullets') {
     const result = await textImage(values.map(value => `\u2022  ${value}`).join('\n'), 1500, 760, false, 'left');
     layers = [{ input: result.data, left: 210, top: Math.round((HEIGHT - result.info.height) / 2) }];
+  } else if (template === 'title-bullets' || template === 'list') {
+    // Clean layout: bold title over left-aligned bullets, shared left margin, centered as a block.
+    const title = await textImage(values[0], 1500, 220, true, 'left');
+    const bullets = await textImage(
+      values.slice(1).map(value => `\u2022  ${value}`).join('\n'),
+      1500,
+      520,
+      false,
+      'left'
+    );
+    const gap = 56;
+    const blockHeight = title.info.height + gap + bullets.info.height;
+    const top = (HEIGHT - blockHeight) / 2;
+    const left = 210;
+    layers = [
+      { input: title.data, left, top: Math.round(top) },
+      { input: bullets.data, left, top: Math.round(top + title.info.height + gap) }
+    ];
   } else {
     throw new Error(`Unknown template: ${template}`);
   }
@@ -167,7 +193,8 @@ function parseArgs(args) {
     }
   }
 
-  const minimum = template === 'description' || template === 'title-description' || template === 'bullets' ? 2 : 1;
+  const multiValue = new Set(['description', 'title-description', 'bullets', 'title-bullets', 'list']);
+  const minimum = multiValue.has(template) ? 2 : 1;
   if (values.length < minimum) {
     throw new Error(`Template ${template} needs at least ${minimum} value${minimum === 1 ? '' : 's'}`);
   }

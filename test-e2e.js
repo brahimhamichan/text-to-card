@@ -127,6 +127,16 @@ async function main() {
         'Bundled Inter fonts',
         'Works on macOS, Linux, Windows'
       ]
+    },
+    {
+      name: 'title-bullets',
+      args: [
+        'title-bullets',
+        'Release checklist',
+        'Install from npm',
+        'Run the e2e suite',
+        'Ship the gallery cards'
+      ]
     }
   ];
 
