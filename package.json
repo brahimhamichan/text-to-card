@@ -1,20 +1,51 @@
 {
-  "name": "text-to-card",
+  "name": "txt2card",
   "version": "0.1.0",
-  "private": true,
-  "description": "Turn text into auto-fitted 16:9 PNG cards.",
+  "description": "CLI that turns text into auto-fitted 16:9 PNG social cards.",
+  "keywords": [
+    "card",
+    "cli",
+    "png",
+    "text",
+    "image",
+    "sharp",
+    "16:9",
+    "social-card"
+  ],
+  "license": "MIT",
+  "author": "Brahim Hamichan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brahimhamichan/text-to-card.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brahimhamichan/text-to-card/issues"
+  },
+  "homepage": "https://github.com/brahimhamichan/text-to-card#readme",
   "type": "commonjs",
   "bin": {
     "txt2card": "cli.js",
     "text-to-card": "cli.js"
   },
+  "files": [
+    "cli.js",
+    "fonts",
+    "skills",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "test": "node test.js",
     "test:e2e": "node test-e2e.js",
-    "test:all": "node test.js && node test-e2e.js"
+    "test:all": "node test.js && node test-e2e.js",
+    "prepublishOnly": "npm run test:all"
   },
   "engines": {
     "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "sharp": "^0.34.3"

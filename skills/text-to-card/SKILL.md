@@ -28,4 +28,4 @@ text-to-card title "This is a test"
 
 Prefer the default path unless the user asks for a specific file. Return the printed absolute path and preview the image when the client supports local images.
 
-If the command is unavailable, run `npm install && npm link` from the repository root (installs both `txt2card` and `text-to-card`).
+If the command is unavailable, install with `npm i -g txt2card` (public package), or from a clone run `npm install && npm link` at the repository root (installs both `txt2card` and `text-to-card`).
