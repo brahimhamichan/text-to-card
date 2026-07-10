@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/brahimhamichan/text-to-card/issues"
   },
-  "homepage": "https://github.com/brahimhamichan/text-to-card#readme",
+  "homepage": "https://txt2card.pages.dev",
   "type": "commonjs",
   "bin": {
     "txt2card": "cli.js",

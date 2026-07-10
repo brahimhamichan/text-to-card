@@ -6,6 +6,8 @@
 
 Local CLI that turns text into auto-fitted 1920×1080 PNG cards.
 
+**Site:** [txt2card.pages.dev](https://txt2card.pages.dev)
+
 ## Install
 
 ```sh
