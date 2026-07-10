@@ -64,6 +64,7 @@ cards/card_2026_07_10_14_30_45_This_Is_A_Test.png
 ## Features
 
 - Fully local — no browser, backend, or idle process
+- Sub-second renders on a typical laptop (no browser, no server)
 - Bundled Inter fonts (same look on macOS, Linux, Windows)
 - Fixed 1920×1080 PNG
 - Text auto-fits inside safe margins
