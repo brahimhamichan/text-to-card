@@ -1,6 +1,6 @@
 ---
 name: text-to-card
-description: Generate local 16:9 PNG cards with auto-fitted titles, body text, title-and-description layouts, or bullet lists. Use when asked to turn text into a social card, slide-like image, report summary image, announcement image, or other simple text-based PNG without a browser or backend.
+description: Generate local 16:9 PNG cards with auto-fitted titles, body text, title-and-description layouts, bullet lists, or a clean title-plus-bullets layout. Use when asked to turn text into a social card, slide-like image, report summary image, announcement image, or other simple text-based PNG without a browser or backend.
 ---
 
 # Text To Card
@@ -12,10 +12,13 @@ txt2card title "This is a test"
 txt2card text "Longer body text"
 txt2card description "Title" "Supporting description"
 txt2card bullets "First point" "Second point"
+txt2card title-bullets "Title" "First point" "Second point"
 
 # also valid
 text-to-card title "This is a test"
 ```
+
+Use `title-bullets` (alias `list`) for a clean title over a bullet list.
 
 ## Output defaults
 

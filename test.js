@@ -27,6 +27,10 @@ async function test() {
     defaultOutputPath('description', ['Main title', 'Body copy'], fixed),
     path.join('cards', 'card_2026_07_10_14_30_45_Main_Title.png')
   );
+  assert.equal(
+    defaultOutputPath('title-bullets', ['Release notes', 'Faster install', 'Cleaner layout'], fixed),
+    path.join('cards', 'card_2026_07_10_14_30_45_Release_Notes.png')
+  );
 
   const parsed = parseArgs(['title', 'Ship it', '-o', 'custom.png']);
   assert.equal(parsed.output, 'custom.png');
@@ -38,7 +42,8 @@ async function test() {
     ['title', ['This is a test! <Local> & "safe"']],
     ['text', [('Long text must remain inside the image. ').repeat(40)]],
     ['description', ['Simple title', ('Description content stays readable and contained. ').repeat(20)]],
-    ['bullets', Array.from({ length: 14 }, (_, index) => `Bullet point ${index + 1} with useful detail`)]
+    ['bullets', Array.from({ length: 14 }, (_, index) => `Bullet point ${index + 1} with useful detail`)],
+    ['title-bullets', ['Ship checklist', 'Install from npm', 'Render a title card', 'Commit and push']]
   ];
 
   for (const [template, values] of cases) {
