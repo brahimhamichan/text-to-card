@@ -1,5 +1,9 @@
 # txt2card
 
+<p align="center">
+  <img src="assets/icon-256.png" width="128" height="128" alt="txt2card icon" />
+</p>
+
 Local CLI that turns text into auto-fitted 1920×1080 PNG cards.
 
 ## Install

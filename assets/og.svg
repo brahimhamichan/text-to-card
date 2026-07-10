@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <rect width="1280" height="640" fill="#f7f7f2"/>
+  <rect x="440" y="120" width="400" height="400" rx="72" fill="#f7f7f2" stroke="#111111" stroke-width="8"/>
+  <rect x="500" y="210" width="280" height="158" rx="16" fill="#ffffff" stroke="#111111" stroke-width="6"/>
+  <rect x="540" y="248" width="200" height="18" rx="9" fill="#111111"/>
+  <rect x="560" y="280" width="160" height="18" rx="9" fill="#111111"/>
+  <rect x="580" y="312" width="120" height="18" rx="9" fill="#111111"/>
+  <text x="640" y="580" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="48" font-weight="700" fill="#111111">txt2card</text>
+</svg>
