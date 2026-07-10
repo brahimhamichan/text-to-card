@@ -2,14 +2,19 @@
 
 Local CLI that turns text into auto-fitted 1920x1080 PNG cards. Uses Sharp + bundled Inter fonts. No browser, backend, or idle process. Same look on macOS, Linux, and Windows.
 
+**CLI commands:** `txt2card` (preferred) or `text-to-card` (full name, same binary).
+
 ```sh
 npm install
 npm link
 
+txt2card title "This is a test"
+txt2card text "A longer block of text"
+txt2card description "Title" "Supporting description"
+txt2card bullets "First point" "Second point" "Third point"
+
+# full name still works
 text-to-card title "This is a test"
-text-to-card text "A longer block of text"
-text-to-card description "Title" "Supporting description"
-text-to-card bullets "First point" "Second point" "Third point"
 ```
 
 ## Output

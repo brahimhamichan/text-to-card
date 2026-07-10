@@ -5,13 +5,16 @@ description: Generate local 16:9 PNG cards with auto-fitted titles, body text, t
 
 # Text To Card
 
-Run `text-to-card` with one template. Keep each bullet as a separate quoted argument.
+Prefer the short CLI `txt2card`. The full name `text-to-card` is an alias for the same binary. Keep each bullet as a separate quoted argument.
 
 ```sh
+txt2card title "This is a test"
+txt2card text "Longer body text"
+txt2card description "Title" "Supporting description"
+txt2card bullets "First point" "Second point"
+
+# also valid
 text-to-card title "This is a test"
-text-to-card text "Longer body text"
-text-to-card description "Title" "Supporting description"
-text-to-card bullets "First point" "Second point"
 ```
 
 ## Output defaults
@@ -25,4 +28,4 @@ text-to-card bullets "First point" "Second point"
 
 Prefer the default path unless the user asks for a specific file. Return the printed absolute path and preview the image when the client supports local images.
 
-If the command is unavailable, run `npm install && npm link` from the repository root.
+If the command is unavailable, run `npm install && npm link` from the repository root (installs both `txt2card` and `text-to-card`).

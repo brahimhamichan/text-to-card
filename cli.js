@@ -37,14 +37,22 @@ const FOREGROUND = '#111111';
 const OUTPUT_DIR = 'cards';
 const SLUG_MAX = 48;
 
-const help = `Usage:
-  text-to-card title "Title" [-o path.png]
-  text-to-card text "Text" [-o path.png]
-  text-to-card description "Title" "Description" [-o path.png]
-  text-to-card bullets "First point" "Second point" [-o path.png]
+function cliName() {
+  const base = path.basename(process.argv[1] || 'txt2card');
+  return base === 'text-to-card' || base === 'txt2card' ? base : 'txt2card';
+}
 
+function helpText(name = cliName()) {
+  return `Usage:
+  ${name} title "Title" [-o path.png]
+  ${name} text "Text" [-o path.png]
+  ${name} description "Title" "Description" [-o path.png]
+  ${name} bullets "First point" "Second point" [-o path.png]
+
+Commands: txt2card (preferred) or text-to-card
 Default output: cards/card_YYYY_MM_DD_HH_mm_ss_<Text_Slug>.png
 Fonts are bundled (Inter) so renders match across macOS, Linux, and Windows.`;
+}
 
 function escapeXml(value) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
@@ -143,7 +151,7 @@ async function render(template, values, output) {
 }
 
 function parseArgs(args) {
-  if (!args.length || args.includes('-h') || args.includes('--help')) return { help: true };
+  if (!args.length || args.includes('-h') || args.includes('--help')) return { help: true, helpText: helpText() };
 
   const template = args.shift();
   const values = [];
@@ -173,14 +181,14 @@ function parseArgs(args) {
 
 async function main(args = process.argv.slice(2)) {
   const options = parseArgs(args);
-  if (options.help) return console.log(help);
+  if (options.help) return console.log(options.helpText || helpText());
   const output = await render(options.template, options.values, options.output);
   console.log(output);
 }
 
 if (require.main === module) {
   main().catch(error => {
-    console.error(`text-to-card: ${error.message}\n\n${help}`);
+    console.error(`${cliName()}: ${error.message}\n\n${helpText()}`);
     process.exitCode = 1;
   });
 }

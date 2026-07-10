@@ -1,4 +1,4 @@
 interface:
   display_name: "Text to Card"
   short_description: "Generate fitted text cards from CLI"
-  default_prompt: "Use $text-to-card to render this content as a 16:9 PNG."
+  default_prompt: "Use $text-to-card (CLI: txt2card or text-to-card) to render this content as a 16:9 PNG."

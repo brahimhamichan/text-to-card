@@ -5,6 +5,7 @@
   "description": "Turn text into auto-fitted 16:9 PNG cards.",
   "type": "commonjs",
   "bin": {
+    "txt2card": "cli.js",
     "text-to-card": "cli.js"
   },
   "scripts": {
