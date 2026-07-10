@@ -1,0 +1,19 @@
+{
+  "name": "text-to-card",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turn text into auto-fitted 16:9 PNG cards.",
+  "type": "commonjs",
+  "bin": {
+    "text-to-card": "cli.js"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "sharp": "^0.34.3"
+  }
+}
