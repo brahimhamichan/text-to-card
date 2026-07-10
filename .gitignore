@@ -4,3 +4,5 @@ cards/*
 !cards/e2e-gallery/
 !cards/e2e-gallery/**
 test-output/
+*.tgz
+.npmrc
