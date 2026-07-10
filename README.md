@@ -91,6 +91,14 @@ npm run test:e2e  # real CLI e2e
 npm run test:all  # both
 ```
 
+## Website
+
+Landing page lives in [`site/`](site/). Redeploy:
+
+```sh
+npx wrangler pages deploy site --project-name=txt2card
+```
+
 ## License
 
 MIT. Inter fonts are under the SIL Open Font License — see [`fonts/LICENSE.txt`](fonts/LICENSE.txt).
