@@ -40,3 +40,11 @@ Override with `-o path.png` (parent dirs are created).
 | `bullets` | Left-aligned bullet list |
 
 Every template auto-fits text inside safe margins.
+
+## Tests
+
+```sh
+npm test          # unit + render checks
+npm run test:e2e  # real CLI e2e (writes cards/e2e-gallery/)
+npm run test:all  # both
+```

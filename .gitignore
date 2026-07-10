@@ -1,4 +1,6 @@
 node_modules/
 card.png
-cards/
+cards/*
+!cards/e2e-gallery/
+!cards/e2e-gallery/**
 test-output/
