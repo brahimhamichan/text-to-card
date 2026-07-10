@@ -3,9 +3,36 @@ const fs = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
 const sharp = require('sharp');
-const { render } = require('./cli');
+const {
+  render,
+  parseArgs,
+  defaultOutputPath,
+  toSnakeStyle,
+  formatTimestamp
+} = require('./cli');
 
 async function test() {
+  assert.equal(toSnakeStyle('This is a test! and Tests are awesome!'), 'This_Is_A_Test_And_Tests_Are_Awesome');
+  assert.equal(toSnakeStyle('simple'), 'Simple');
+  assert.equal(toSnakeStyle('@@@'), 'Card');
+  assert.ok(toSnakeStyle('a'.repeat(80)).length <= 48);
+
+  const fixed = new Date(2026, 6, 10, 14, 30, 45);
+  assert.equal(formatTimestamp(fixed), '2026_07_10_14_30_45');
+  assert.equal(
+    defaultOutputPath('title', ['Hello world'], fixed),
+    path.join('cards', 'card_2026_07_10_14_30_45_Hello_World.png')
+  );
+  assert.equal(
+    defaultOutputPath('description', ['Main title', 'Body copy'], fixed),
+    path.join('cards', 'card_2026_07_10_14_30_45_Main_Title.png')
+  );
+
+  const parsed = parseArgs(['title', 'Ship it', '-o', 'custom.png']);
+  assert.equal(parsed.output, 'custom.png');
+  const auto = parseArgs(['text', 'Auto name please']);
+  assert.match(auto.output, /^cards[/\\]card_\d{4}(?:_\d{2}){5}_Auto_Name_Please\.png$/);
+
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'text-to-card-'));
   const cases = [
     ['title', ['This is a test! <Local> & "safe"']],
@@ -23,7 +50,7 @@ async function test() {
     assert.ok(stats.channels[0].min < 100, `${template} output contains no visible text`);
   }
 
-  console.log(`ok: ${cases.length} templates`);
+  console.log(`ok: naming + ${cases.length} templates`);
 }
 
 test().catch(error => {
