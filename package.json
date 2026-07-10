@@ -16,7 +16,7 @@
   "author": "Brahim Hamichan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/brahimhamichan/text-to-card.git"
+    "url": "git+https://github.com/brahimhamichan/text-to-card.git"
   },
   "bugs": {
     "url": "https://github.com/brahimhamichan/text-to-card/issues"
