@@ -57,10 +57,21 @@ async function main() {
   {
     const help = run(['--help'], work);
     assertOk(help, 'help');
-    assert.match(help.stdout, /text-to-card title/);
+    assert.match(help.stdout, /(?:txt2card|text-to-card) title/);
+    assert.match(help.stdout, /txt2card \(preferred\) or text-to-card/);
     assert.match(help.stdout, /cards\/card_YYYY_MM_DD_HH_mm_ss/);
     passed += 1;
     console.log('ok  help');
+  }
+
+  // --- both bin names map to same CLI when invoked via node path is fine;
+  // package.json exposes txt2card + text-to-card after npm link ---
+  {
+    const pkg = require('./package.json');
+    assert.equal(pkg.bin.txt2card, 'cli.js');
+    assert.equal(pkg.bin['text-to-card'], 'cli.js');
+    passed += 1;
+    console.log('ok  bin aliases (txt2card + text-to-card)');
   }
 
   // --- invalid usage ---
