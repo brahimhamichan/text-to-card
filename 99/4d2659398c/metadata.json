@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "994d2659398c",
+  "strategy": "manual-commit",
+  "branch": "feat/themes-sizes-options",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "CHANGELOG.md",
+    "README.md",
+    "cli.js",
+    "skills/text-to-card/SKILL.md",
+    "test.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/99/4d2659398c/0/metadata.json",
+      "transcript": "/99/4d2659398c/0/full.jsonl",
+      "compact_transcript": "/99/4d2659398c/0/transcript.jsonl",
+      "content_hash": "/99/4d2659398c/0/content_hash.txt",
+      "prompt": "/99/4d2659398c/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 17548,
+    "cache_creation_tokens": 52631,
+    "cache_read_tokens": 1842230,
+    "output_tokens": 18585,
+    "api_call_count": 27
+  }
+}
