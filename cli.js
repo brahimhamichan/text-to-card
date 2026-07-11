@@ -37,6 +37,15 @@ const HEIGHT = 1080;
 const OUTPUT_DIR = 'cards';
 const SLUG_MAX = 48;
 
+// libvips/Pango spells the centered alignment the British way; alias it for clarity.
+const ALIGN_CENTER = 'centre';
+const ALIGN_LEFT = 'left';
+
+// Optional --logo watermark: fraction of canvas height for the mark, and the
+// margin from the bottom-right corner (also as a fraction of the canvas).
+const LOGO_HEIGHT_RATIO = 0.09;
+const LOGO_MARGIN_RATIO = 0.035;
+
 // Named themes: swap background/foreground as a pair. `light` is the default.
 const THEMES = {
   light: { bg: '#f7f7f2', fg: '#111111' },
@@ -77,6 +86,7 @@ Options:
   --bg <color>          Background color (hex like #0f172a or a named color)
   --fg <color>          Text color (hex or named color)
   --size <preset|WxH>   ${Object.keys(SIZES).join(', ')}, or e.g. 1600x900 (default: 16:9)
+  --logo <path>         Watermark image placed in the bottom-right corner
   -v, --version         Print version and exit
   -h, --help            Show this help
 
@@ -88,8 +98,16 @@ Default output: cards/card_YYYY_MM_DD_HH_mm_ss_<Text_Slug>.png
 Fonts are bundled (Inter) so renders match across macOS, Linux, and Windows.`;
 }
 
+// Escape all five XML predefined entities. Text is injected as Pango markup body
+// content (never into an attribute), so `<` and `&` are the only strictly-required
+// escapes; quotes are escaped too so this stays a correct general-purpose escaper.
 function escapeXml(value) {
-  return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
 }
 
 function pad(value) {
@@ -133,7 +151,9 @@ function contentForSlug(template, values) {
   ) {
     return values[0] || '';
   }
-  if (template === 'bullets') return values.slice(0, 3).join(' ');
+  // Use every bullet (SLUG_MAX bounds the final length) so the filename reflects
+  // what was actually rendered — render draws all bullets, not just the first three.
+  if (template === 'bullets') return values.join(' ');
   return values.join(' ');
 }
 
@@ -207,14 +227,14 @@ async function render(template, values, output, opts = {}) {
 
   if (template === 'title' || template === 'text') {
     const box = scaleH(760);
-    const result = await textImage(values.join(' '), boxW, box, template === 'title', 'centre', foreground);
+    const result = await textImage(values.join(' '), boxW, box, template === 'title', ALIGN_CENTER, foreground);
     warnIfClipped(result, box, template, warn);
     layers = [centered(result.data, result.info, (height - result.info.height) / 2, width)];
   } else if (template === 'description' || template === 'title-description') {
     const titleBox = scaleH(280);
     const descBox = scaleH(360);
-    const title = await textImage(values[0], boxW, titleBox, true, 'centre', foreground);
-    const description = await textImage(values.slice(1).join(' '), innerW, descBox, false, 'centre', foreground);
+    const title = await textImage(values[0], boxW, titleBox, true, ALIGN_CENTER, foreground);
+    const description = await textImage(values.slice(1).join(' '), innerW, descBox, false, ALIGN_CENTER, foreground);
     warnIfClipped(title, titleBox, 'title', warn);
     warnIfClipped(description, descBox, 'description', warn);
     const gap = scaleGap(60);
@@ -230,7 +250,7 @@ async function render(template, values, output, opts = {}) {
       innerW,
       box,
       false,
-      'left',
+      ALIGN_LEFT,
       foreground
     );
     warnIfClipped(result, box, 'bullets', warn);
@@ -239,13 +259,13 @@ async function render(template, values, output, opts = {}) {
     // Clean layout: bold title over left-aligned bullets, shared left margin, centered as a block.
     const titleBox = scaleH(220);
     const bulletsBox = scaleH(520);
-    const title = await textImage(values[0], innerW, titleBox, true, 'left', foreground);
+    const title = await textImage(values[0], innerW, titleBox, true, ALIGN_LEFT, foreground);
     const bullets = await textImage(
       values.slice(1).map(value => `\u2022  ${value}`).join('\n'),
       innerW,
       bulletsBox,
       false,
-      'left',
+      ALIGN_LEFT,
       foreground
     );
     warnIfClipped(title, titleBox, 'title', warn);
@@ -261,6 +281,10 @@ async function render(template, values, output, opts = {}) {
     throw new Error(`Unknown template: ${template}`);
   }
 
+  if (opts.logo) {
+    layers.push(await logoLayer(opts.logo, width, height));
+  }
+
   const resolved = path.resolve(output);
   await fsp.mkdir(path.dirname(resolved), { recursive: true });
   await sharp({ create: { width, height, channels: 3, background } })
@@ -268,6 +292,21 @@ async function render(template, values, output, opts = {}) {
     .png()
     .toFile(resolved);
   return resolved;
+}
+
+/** Build a bottom-right watermark layer from a logo image scaled to the canvas. */
+async function logoLayer(logoPath, width, height) {
+  const targetHeight = Math.round(height * LOGO_HEIGHT_RATIO);
+  const margin = Math.round(Math.min(width, height) * LOGO_MARGIN_RATIO);
+  const logo = await sharp(logoPath)
+    .resize({ height: targetHeight, fit: 'inside', withoutEnlargement: true })
+    .png()
+    .toBuffer({ resolveWithObject: true });
+  return {
+    input: logo.data,
+    left: Math.max(0, width - logo.info.width - margin),
+    top: Math.max(0, height - logo.info.height - margin)
+  };
 }
 
 function parseArgs(args) {
@@ -281,6 +320,7 @@ function parseArgs(args) {
   let bg;
   let fg;
   let size;
+  let logo;
 
   const takeValue = (flag, rest) => {
     if (!rest.length) throw new Error(`Missing value for ${flag}`);
@@ -299,6 +339,8 @@ function parseArgs(args) {
       fg = takeValue(value, args);
     } else if (value === '--size') {
       size = takeValue(value, args);
+    } else if (value === '--logo') {
+      logo = takeValue(value, args);
     } else {
       values.push(value);
     }
@@ -318,6 +360,10 @@ function parseArgs(args) {
   const foreground = normalizeColor(fg || palette.fg, 'foreground');
   const resolvedSize = size ? parseSize(size) : [WIDTH, HEIGHT];
 
+  if (logo && !fs.existsSync(logo)) {
+    throw new Error(`Logo file not found: ${logo}`);
+  }
+
   const autoOutput = !output;
   return {
     template,
@@ -326,7 +372,8 @@ function parseArgs(args) {
     autoOutput,
     background,
     foreground,
-    size: resolvedSize
+    size: resolvedSize,
+    logo
   };
 }
 
@@ -373,7 +420,8 @@ async function main(args = process.argv.slice(2)) {
   const output = await render(options.template, options.values, target, {
     background: options.background,
     foreground: options.foreground,
-    size: options.size
+    size: options.size,
+    logo: options.logo
   });
   console.log(output);
 }

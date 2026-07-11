@@ -64,6 +64,10 @@ async function test() {
   assert.deepEqual(parseSize('og'), [1200, 630]);
   assert.deepEqual(parseSize('640x480'), [640, 480]);
 
+  // --logo: parsed when the file exists, rejected when it does not
+  assert.equal(parseArgs(['title', 'x', '--logo', 'assets/icon-256.png']).logo, 'assets/icon-256.png');
+  assert.throws(() => parseArgs(['title', 'x', '--logo', 'does-not-exist.png']), /Logo file not found/);
+
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'text-to-card-'));
   const cases = [
     ['title', ['This is a test! <Local> & "safe"']],
@@ -94,6 +98,24 @@ async function test() {
   assert.deepEqual([darkMeta.width, darkMeta.height], [1080, 1080]);
   assert.ok(darkStats.channels[0].min < 60, 'dark theme background should be dark');
   assert.ok(darkStats.channels[0].max > 200, 'dark theme should render light text');
+
+  // --logo watermark: composited into the bottom-right without changing dimensions.
+  const plainOut = path.join(directory, 'plain.png');
+  const logoOut = path.join(directory, 'logo.png');
+  await render('title', ['Brand'], plainOut, { foreground: THEMES.light.fg });
+  await render('title', ['Brand'], logoOut, { foreground: THEMES.light.fg, logo: 'assets/icon-256.png' });
+  const logoMeta = await sharp(logoOut).metadata();
+  assert.deepEqual([logoMeta.width, logoMeta.height], [1920, 1080]);
+  // The bottom-right corner pixels must change once a logo is stamped there,
+  // while a top-left corner (away from the mark) stays identical.
+  const brCorner = { left: 1920 - 200, top: 1080 - 200, width: 200, height: 200 };
+  const tlCorner = { left: 0, top: 0, width: 200, height: 200 };
+  const plainBr = await sharp(plainOut).extract(brCorner).raw().toBuffer();
+  const logoBr = await sharp(logoOut).extract(brCorner).raw().toBuffer();
+  const plainTl = await sharp(plainOut).extract(tlCorner).raw().toBuffer();
+  const logoTl = await sharp(logoOut).extract(tlCorner).raw().toBuffer();
+  assert.notEqual(Buffer.compare(plainBr, logoBr), 0, 'logo should change the bottom-right corner');
+  assert.equal(Buffer.compare(plainTl, logoTl), 0, 'logo should not touch the top-left corner');
 
   console.log(`ok: naming + ${cases.length} templates + options`);
 }
