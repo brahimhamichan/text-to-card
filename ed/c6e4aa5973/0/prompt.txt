@@ -1,0 +1,9 @@
+we you able to use the `entire` cli?
+
+---
+
+can you push all changes to ghithub main
+
+---
+
+fix the rest of the issues, and this time run all the e2e tests and deploy directly to main, no need to create a PR
