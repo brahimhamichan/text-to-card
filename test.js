@@ -8,7 +8,10 @@ const {
   parseArgs,
   defaultOutputPath,
   toSnakeStyle,
-  formatTimestamp
+  formatTimestamp,
+  normalizeColor,
+  parseSize,
+  THEMES
 } = require('./cli');
 
 async function test() {
@@ -34,8 +37,32 @@ async function test() {
 
   const parsed = parseArgs(['title', 'Ship it', '-o', 'custom.png']);
   assert.equal(parsed.output, 'custom.png');
+  assert.equal(parsed.autoOutput, false);
+  assert.deepEqual(parsed.size, [1920, 1080]);
+  assert.equal(parsed.background, THEMES.light.bg);
   const auto = parseArgs(['text', 'Auto name please']);
   assert.match(auto.output, /^cards[/\\]card_\d{4}(?:_\d{2}){5}_Auto_Name_Please\.png$/);
+  assert.equal(auto.autoOutput, true);
+
+  // Options: version, theme, colors, sizes
+  assert.equal(parseArgs(['--version']).version, true);
+  const themed = parseArgs(['title', 'x', '--theme', 'dark', '--size', 'square']);
+  assert.equal(themed.background, THEMES.dark.bg);
+  assert.equal(themed.foreground, THEMES.dark.fg);
+  assert.deepEqual(themed.size, [1080, 1080]);
+  const overridden = parseArgs(['title', 'x', '--theme', 'dark', '--bg', '#010203', '--fg', 'white']);
+  assert.equal(overridden.background, '#010203');
+  assert.equal(overridden.foreground, 'white');
+  assert.deepEqual(parseArgs(['title', 'x', '--size', '800x600']).size, [800, 600]);
+  assert.throws(() => parseArgs(['title', 'x', '--theme', 'neon']), /Unknown theme/);
+  assert.throws(() => parseArgs(['title', 'x', '--bg', 'zzz#']), /Invalid background/);
+  assert.throws(() => parseArgs(['title', 'x', '--size', 'huge']), /Invalid size/);
+
+  assert.equal(normalizeColor('#0f172a', 'bg'), '#0f172a');
+  assert.equal(normalizeColor('White', 'bg'), 'white');
+  assert.throws(() => normalizeColor('12ff', 'bg'), /Invalid bg/);
+  assert.deepEqual(parseSize('og'), [1200, 630]);
+  assert.deepEqual(parseSize('640x480'), [640, 480]);
 
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'text-to-card-'));
   const cases = [
@@ -55,7 +82,20 @@ async function test() {
     assert.ok(stats.channels[0].min < 100, `${template} output contains no visible text`);
   }
 
-  console.log(`ok: naming + ${cases.length} templates`);
+  // Custom size + dark theme: dimensions honored, background is dark, text is light.
+  const darkOut = path.join(directory, 'dark-square.png');
+  await render('title', ['Dark mode'], darkOut, {
+    size: [1080, 1080],
+    background: THEMES.dark.bg,
+    foreground: THEMES.dark.fg
+  });
+  const darkMeta = await sharp(darkOut).metadata();
+  const darkStats = await sharp(darkOut).stats();
+  assert.deepEqual([darkMeta.width, darkMeta.height], [1080, 1080]);
+  assert.ok(darkStats.channels[0].min < 60, 'dark theme background should be dark');
+  assert.ok(darkStats.channels[0].max > 200, 'dark theme should render light text');
+
+  console.log(`ok: naming + ${cases.length} templates + options`);
 }
 
 test().catch(error => {
