@@ -25,6 +25,7 @@ Use `title-bullets` (alias `list`) for a clean title over a bullet list.
 - `--theme <name>`: `light` (default), `dark`, `midnight`, `paper`
 - `--bg <color>` / `--fg <color>`: hex (`#0f172a`) or a named color
 - `--size <preset|WxH>`: `16:9` (default), `wide`, `square`, `og`, `story`, `portrait`, or e.g. `1600x900`
+- `--logo <path>`: watermark image in the bottom-right corner
 - `-v`, `--version`: print version
 - Pass `-` in place of a value to read that value from stdin
 

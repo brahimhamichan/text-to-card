@@ -65,6 +65,7 @@ echo "Piped title" | txt2card title -
 | `--bg <color>` | Background color — hex (`#0f172a`) or a named color |
 | `--fg <color>` | Text color — hex or named color |
 | `--size <preset\|WxH>` | `16:9` (default), `wide`, `square`, `og`, `story`, `portrait`, or e.g. `1600x900` |
+| `--logo <path>` | Watermark image placed in the bottom-right corner |
 | `-v, --version` | Print version and exit |
 | `-h, --help` | Show help |
 
@@ -74,6 +75,9 @@ txt2card title "Ship it" --theme dark --size square
 
 # custom colors + Open Graph size
 txt2card description "Launch" "Now available" --bg "#123456" --fg white --size og
+
+# brand a card with a corner logo
+txt2card title "Ship it" --logo assets/icon-256.png
 ```
 
 Auto-named cards never overwrite each other — a `_2`, `_3`, … suffix is added

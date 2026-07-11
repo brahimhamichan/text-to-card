@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `--theme` (light, dark, midnight, paper) plus `--bg` / `--fg` for custom colors
 - `--size` presets (16:9, wide, square, og, story, portrait) and custom `WxH`;
   layout scales proportionally to the canvas
+- `--logo <path>` watermark composited into the bottom-right corner
 - `-v` / `--version` flag
 - Read a value from stdin by passing `-` in its place
 - Warning when text may be clipped (too long for the chosen size)
@@ -21,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Auto-named cards no longer clobber each other within the same second
   (a `_2`, `_3`, … suffix is added on collision)
+- `bullets` filenames now reflect every bullet rendered, not just the first three
+- `escapeXml` escapes all five XML entities (quotes included)
 - `title-description` and `list` aliases are now documented in `--help` and README
 
 ## [0.1.0] - 2026-07-10

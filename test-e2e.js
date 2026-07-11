@@ -190,6 +190,60 @@ async function main() {
     console.log('ok  custom -o nested path');
   }
 
+  // --- --logo watermark via real CLI ---
+  {
+    const logoCard = path.join(work, 'branded.png');
+    const result = run(
+      ['title', 'Branded card', '--logo', path.join(ROOT, 'assets', 'icon-256.png'), '-o', logoCard],
+      work
+    );
+    assertOk(result, '--logo');
+    await assertCardImage(logoCard, '--logo');
+    await fsp.copyFile(logoCard, path.join(gallery, 'logo-watermark.png'));
+    passed += 1;
+    console.log('ok  --logo watermark');
+  }
+
+  // --- --version flag ---
+  {
+    const pkg = require('./package.json');
+    const result = run(['--version'], work);
+    assertOk(result, '--version');
+    assert.equal(result.stdout.trim(), pkg.version, '--version should print package version');
+    passed += 1;
+    console.log('ok  --version');
+  }
+
+  // --- --theme + --size via real CLI (dark 1080x1080) ---
+  {
+    const themed = path.join(work, 'themed.png');
+    const result = run(['title', 'Dark square', '--theme', 'dark', '--size', 'square', '-o', themed], work);
+    assertOk(result, '--theme/--size');
+    const metadata = await sharp(themed).metadata();
+    assert.equal(metadata.width, 1080, 'square width');
+    assert.equal(metadata.height, 1080, 'square height');
+    const stats = await sharp(themed).stats();
+    assert.ok(stats.channels[0].min < 60, 'dark theme should have dark pixels');
+    assert.ok(stats.channels[0].max > 200, 'dark theme should render light text');
+    passed += 1;
+    console.log('ok  --theme dark --size square');
+  }
+
+  // --- stdin via "-" ---
+  {
+    const piped = path.join(work, 'piped.png');
+    const result = spawnSync(process.execPath, [CLI, 'title', '-', '-o', piped], {
+      cwd: work,
+      encoding: 'utf8',
+      input: 'Piped in title',
+      env: { ...process.env }
+    });
+    assertOk(result, 'stdin "-"');
+    await assertCardImage(piped, 'stdin "-"');
+    passed += 1;
+    console.log('ok  stdin "-"');
+  }
+
   // --- successive runs do not clobber (timestamp uniqueness at second resolution) ---
   {
     const first = run(['title', 'Same title twice'], work);
