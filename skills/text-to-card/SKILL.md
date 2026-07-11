@@ -20,13 +20,27 @@ text-to-card title "This is a test"
 
 Use `title-bullets` (alias `list`) for a clean title over a bullet list.
 
+## Options
+
+- `--theme <name>`: `light` (default), `dark`, `midnight`, `paper`
+- `--bg <color>` / `--fg <color>`: hex (`#0f172a`) or a named color
+- `--size <preset|WxH>`: `16:9` (default), `wide`, `square`, `og`, `story`, `portrait`, or e.g. `1600x900`
+- `-v`, `--version`: print version
+- Pass `-` in place of a value to read that value from stdin
+
+```sh
+txt2card title "Ship it" --theme dark --size square
+echo "Piped title" | txt2card title -
+```
+
 ## Output defaults
 
 - Directory: `cards/` (created automatically)
 - Filename: `card_YYYY_MM_DD_HH_mm_ss_<Text_Slug>.png`
 - Example: `cards/card_2026_07_10_14_30_45_This_Is_A_Test.png`
 - Override: `-o path/to/file.png`
-- Always 1920x1080 PNG; text size adapts automatically
+- Default 1920x1080 PNG (change with `--size`); text size adapts automatically
+- Auto-named cards get a `_2`, `_3`, … suffix instead of overwriting on collision
 - Fonts are bundled (Inter) so output matches across machines
 
 Prefer the default path unless the user asks for a specific file. Return the printed absolute path and preview the image when the client supports local images.

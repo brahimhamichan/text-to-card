@@ -43,15 +43,41 @@ text-to-card title "This is a test"
 
 # custom output path (parent dirs are created)
 txt2card title "Hello" -o out/hello.png
+
+# read a value from stdin with "-"
+echo "Piped title" | txt2card title -
 ```
 
 | Command | Layout |
 | --- | --- |
 | `title` | Large centered title |
 | `text` | Centered body text |
-| `description` | Title + description |
+| `description` | Title + description (alias `title-description`) |
 | `bullets` | Left-aligned bullet list |
-| `title-bullets` | Clean title over bullets (`list` alias) |
+| `title-bullets` | Clean title over bullets (alias `list`) |
+
+## Options
+
+| Flag | Description |
+| --- | --- |
+| `-o, --output <path>` | Output file (parent dirs created) |
+| `--theme <name>` | `light` (default), `dark`, `midnight`, `paper` |
+| `--bg <color>` | Background color — hex (`#0f172a`) or a named color |
+| `--fg <color>` | Text color — hex or named color |
+| `--size <preset\|WxH>` | `16:9` (default), `wide`, `square`, `og`, `story`, `portrait`, or e.g. `1600x900` |
+| `-v, --version` | Print version and exit |
+| `-h, --help` | Show help |
+
+```sh
+# dark square card for Instagram
+txt2card title "Ship it" --theme dark --size square
+
+# custom colors + Open Graph size
+txt2card description "Launch" "Now available" --bg "#123456" --fg white --size og
+```
+
+Auto-named cards never overwrite each other — a `_2`, `_3`, … suffix is added
+when a same-second render would collide.
 
 ## Output
 
